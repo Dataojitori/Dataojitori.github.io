@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>本地对话 JSON 阅读器</title>
+  <style>
+    :root{--bg:#f7f7f8;--panel:#ffffff;--ink:#2f2f2f;--muted:#6e6e80;--accent:#10a37f;--border:#e5e5e5;--text:#353740;--shadow:rgba(0,0,0,0.05)}
+    html,body{height:100%;scroll-behavior:smooth}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font:17px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;letter-spacing:0.01em}
+    header{position:sticky;top:0;background:rgba(255,255,255,0.98);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid var(--border);z-index:100;box-shadow:0 1px 3px var(--shadow)}
+    .wrap{max-width:900px;margin:0 auto;padding:20px}
+    main.wrap{padding-top:24px}
+    h1{font-size:22px;margin:0 0 12px 0;font-weight:600;color:var(--ink)}
+    .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:8px}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:8px;box-shadow:0 1px 2px var(--shadow);margin:20px 0;overflow:hidden;transition:box-shadow 0.2s,border-color 0.2s}
+    .card:hover{box-shadow:0 2px 8px rgba(0,0,0,0.08);border-color:#d0d0d0}
+    .card .head{display:flex;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);background:#fafafa}
+    .role{font-weight:600;font-size:15px;color:var(--ink)}
+    .time{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+    .body{padding:20px 22px;font-size:16px;line-height:1.75;color:var(--text)}
+    .body p{margin:0.8em 0}
+    .body p:first-child{margin-top:0}
+    .body p:last-child{margin-bottom:0}
+    .body h1,.body h2,.body h3,.body h4,.body h5,.body h6{color:var(--ink);margin:1.2em 0 0.6em;font-weight:600}
+    .body h1{font-size:1.6em}
+    .body h2{font-size:1.4em}
+    .body h3{font-size:1.2em}
+    .body a{color:#0969da;text-decoration:none}
+    .body a:hover{text-decoration:underline}
+    .body strong{color:var(--ink)}
+    .sys{border-left:3px solid #ff9500}
+    .assistant{border-left:3px solid #10a37f;background:#f7f9f7}
+    .user{border-left:3px solid #0969da;background:#f6f8fa}
+    .system{border-left:3px solid #cf222e}
+    .tool{border-left:3px solid #bf8700}
+    .controls label{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;background:var(--panel);cursor:pointer;font-size:14px;transition:background 0.15s,border-color 0.15s}
+    .controls label:hover{background:#f6f6f7;border-color:#d0d0d0}
+    input[type="file"]{display:none}
+    input[type="checkbox"]{cursor:pointer}
+    .filebtn,.btn{cursor:pointer;padding:8px 16px;border:1px solid var(--border);border-radius:6px;background:var(--panel);color:var(--ink);font-size:14px;font-weight:500;transition:background 0.15s,border-color 0.15s}
+    .filebtn:hover,.btn:hover{background:#f6f6f7;border-color:#d0d0d0}
+    .drop{border:2px dashed var(--border);border-radius:8px;padding:20px;text-align:center;color:var(--muted);margin:12px 0 0 0;transition:all 0.2s;background:#fafbfc}
+    .drop.drag{border-color:var(--accent);color:var(--ink);background:#e8f5f1}
+    .search{flex:1;min-width:220px}
+    .search input{width:100%;padding:8px 14px;border-radius:6px;border:1px solid var(--border);background:var(--panel);color:var(--ink);font-size:14px;transition:border-color 0.15s,box-shadow 0.15s}
+    .search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(16,163,127,0.1)}
+    .count{color:var(--muted);font-size:13px;margin-left:auto;white-space:nowrap}
+    .hidden{display:none !important}
+    .error{color:#cf222e;margin:20px 0;padding:12px;background:#ffebe9;border:1px solid #ffcecb;border-radius:6px}
+    pre{white-space:pre-wrap;word-wrap:break-word;background:#f6f8fa;padding:16px;border-radius:6px;overflow-x:auto;font-size:14px;line-height:1.6;border:1px solid #e5e7eb}
+    code{background:#f6f8fa;border:1px solid #e5e7eb;padding:3px 6px;border-radius:4px;font-size:0.9em;font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;color:#24292f}
+    pre code{background:none;border:none;padding:0}
+    .tips{color:var(--muted);font-size:13px;margin-top:10px;line-height:1.6}
+    .tips code{font-size:12px}
+  </style>
+  <!-- 在线时加载 Marked + DOMPurify；离线 fallback 到简易 Markdown 渲染 -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>本地对话 JSON 阅读器</h1>
+      <div class="bar controls">
+        <label class="filebtn" for="file">选择 JSON 文件</label>
+        <input id="file" type="file" accept=".json,application/json" />
+        <button class="btn" id="openSample">加载示例</button>
+        <label><input type="checkbox" id="showSystem"> 显示 system / 工具消息</label>
+        <label><input type="checkbox" id="renderMd" checked> 渲染 Markdown/富文本</label>
+        <div class="search"><input id="q" placeholder="搜索消息文本 / 角色 / 时间戳" /></div>
+        <span class="count" id="count">未加载</span>
+      </div>
+      <div id="drop" class="drop">拖拽 JSON 到这里，或点击左侧按钮选择文件</div>
+      <div class="tips">支持常见格式：<code>[{role, content, created_at}]</code>、OpenAI/ChatGPT 导出（<code>mapping</code> 结构）、
+        自定义 <code>messages</code> 数组、以及 content 为数组（text/code/image）等。无法识别时会自动降级为原始文本查看。</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="list"></div>
+    <div id="error" class="error"></div>
+  </main>
+
+<script>
+(function(){
+  const $ = sel => document.querySelector(sel);
+  const list = $('#list');
+  const count = $('#count');
+  const showSystem = $('#showSystem');
+  const renderMd = $('#renderMd');
+  const q = $('#q');
+  const drop = $('#drop');
+  const fileInput = $('#file');
+  const openSample = $('#openSample');
+
+  let ALL = [];
+  let SAFE = window.DOMPurify || null;
+  let MARKED_READY = false;
+
+  // Marked & DOMPurify may load async
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(()=>{
+      MARKED_READY = !!window.marked;
+      if (!SAFE && window.DOMPurify) SAFE = window.DOMPurify;
+    }, 400);
+  });
+
+  // Basic escape if DOMPurify not present
+  function escapeHTML(str){
+    return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[s]));
+  }
+
+  // Very naive Markdown fallback (bold/italic/inline code/links/headers/blocks)
+  function naiveMd(md){
+    let html = escapeHTML(md)
+      .replace(/^###### (.*)$/gm,'<h6>$1</h6>')
+      .replace(/^##### (.*)$/gm,'<h5>$1</h5>')
+      .replace(/^#### (.*)$/gm,'<h4>$1</h4>')
+      .replace(/^### (.*)$/gm,'<h3>$1</h3>')
+      .replace(/^## (.*)$/gm,'<h2>$1</h2>')
+      .replace(/^# (.*)$/gm,'<h1>$1</h1>')
+      .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+      .replace(/`([^`]+)`/g,'<code>$1</code>')
+      .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+      .replace(/\*([^*]+)\*/g,'<em>$1</em>')
+      .replace(/\[(.*?)\]\((.*?)\)/g,'<a href="$2" target="_blank" rel="noreferrer noopener">$1<\/a>')
+      .replace(/\n\n/g,'</p><p>');
+    return '<p>'+html+'</p>';
+  }
+
+  function toIsoOrEmpty(input){
+    if (input==null || input==='') return '';
+    try{
+      let ms;
+      if (typeof input === 'number' && isFinite(input)){
+        ms = input < 1e12 ? input*1000 : input;
+      } else if (typeof input === 'string'){
+        const n = Number(input);
+        if (!Number.isNaN(n) && isFinite(n)){
+          ms = n < 1e12 ? n*1000 : n;
+        } else {
+          const parsed = Date.parse(input);
+          if (Number.isNaN(parsed)) return '';
+          ms = parsed;
+        }
+      } else {
+        const parsed = Date.parse(String(input));
+        if (Number.isNaN(parsed)) return '';
+        ms = parsed;
+      }
+      const d = new Date(ms);
+      if (isNaN(d.getTime())) return '';
+      return d.toISOString();
+    }catch(_){ return ''; }
+  }
+
+  function sanitize(html){
+    if (SAFE) return SAFE.sanitize(html, {USE_PROFILES:{html:true}});
+    return html; // assume trusted in offline
+  }
+
+  function renderMarkdown(md){
+    if (!renderMd.checked) return '<pre>'+escapeHTML(md)+'</pre>';
+    if (window.marked && MARKED_READY){
+      try{
+        const raw = window.marked.parse(md, {mangle:false, headerIds:false});
+        return sanitize(raw);
+      }catch(e){ return naiveMd(md);}    
+    }
+    return naiveMd(md);
+  }
+
+  function textFromContent(content){
+    if (content==null) return '';
+    if (typeof content === 'string') return content;
+    if (Array.isArray(content)){
+      return content.map(part=>{
+        if (!part) return '';
+        if (typeof part === 'string') return part;
+        if (typeof part.text === 'string') return part.text;
+        if (typeof part.content === 'string') return part.content;
+        if (part.type === 'text' && part.text) return part.text;
+        if (part.type === 'input_text' && part.input_text) return part.input_text;
+        if (part.type === 'image_url' && part.image_url) return `[image] ${part.image_url.url||part.image_url}`;
+        if (part.type === 'tool' && part.tool_name) return `[tool:${part.tool_name}] ${JSON.stringify(part)}`;
+        return JSON.stringify(part);
+      }).join('\n');
+    }
+    if (typeof content === 'object'){
+      if (typeof content.text === 'string') return content.text;
+      if (typeof content.content === 'string') return content.content;
+      if (Array.isArray(content.parts)) return textFromContent(content.parts);
+      return JSON.stringify(content);
+    }
+    return String(content);
+  }
+
+  function classifyRole(role='assistant'){
+    const r = String(role).toLowerCase();
+    if (r.includes('system')) return 'system';
+    if (r.includes('tool') || r.includes('function')) return 'tool';
+    if (r.includes('user')) return 'user';
+    if (r.includes('assistant') || r.includes('model')) return 'assistant';
+    return 'assistant';
+  }
+
+  function parseOpenAIExport(json){
+    // ChatGPT 导出常见的 mapping 结构
+    if (!json || typeof json !== 'object') return null;
+    if (json.mapping && typeof json.mapping === 'object'){
+      const arr=[];
+      for (const id in json.mapping){
+        const node = json.mapping[id];
+        const m = node && node.message;
+        if (!m) continue;
+        const role = m.author?.role || m.role || 'assistant';
+        const ts = m.create_time || node.create_time || m.update_time || null;
+        const parts = Array.isArray(m.content?.parts) ? m.content.parts : m.content;
+        const text = textFromContent(parts);
+        const created_at = toIsoOrEmpty(ts);
+        arr.push({role, content:text, created_at});
+      }
+      // 保持时间顺序
+      arr.sort((a,b)=> (a.created_at||'').localeCompare(b.created_at||''));
+      return arr;
+    }
+    return null;
+  }
+
+  function parseGeneric(json){
+    // 直接就是 messages 数组
+    if (Array.isArray(json)) return json;
+    if (Array.isArray(json.messages)) return json.messages;
+    if (Array.isArray(json.conversation)) return json.conversation;
+    if (Array.isArray(json.items)) return json.items;
+    return null;
+  }
+
+  function deepFindMessages(x){
+    // 递归搜寻含 role+content 的对象数组
+    const out=[];
+    (function walk(node){
+      if (!node) return;
+      if (Array.isArray(node)){
+        if (node.length && typeof node[0]==='object'){
+          const looksLike = node.every(it=> it && (('role'in it)||('message'in it)||('author'in it)));
+          if (looksLike) out.push(node);
+        }
+        node.forEach(walk);
+      } else if (typeof node==='object'){
+        for (const k in node) walk(node[k]);
+      }
+    })(x);
+    return out[0] || [];
+  }
+
+  function normalize(list){
+    return list.map((m,i)=>{
+      const role = m.role || m.author?.role || m.message?.role || 'assistant';
+      let content = m.content ?? m.message?.content ?? m.data?.content ?? m.body;
+      const created_at_raw = m.created_at || m.create_time || m.timestamp || m.time || (m.id?.split('_').at(-1));
+      const text = textFromContent(content);
+      const created_at = toIsoOrEmpty(created_at_raw);
+      return { idx:i, role: classifyRole(role), raw_role: role, content: text, created_at };
+    }).filter(x=> x.content && x.content.trim().length);
+  }
+
+  function render(messages){
+    const showSys = showSystem.checked;
+    const term = q.value.trim().toLowerCase();
+    list.innerHTML='';
+    let shown=0;
+    for (const m of messages){
+      if (!showSys && (m.role==='system' || m.role==='tool')) continue;
+      const hay = (m.content+' '+m.raw_role+' '+(m.created_at||'')).toLowerCase();
+      if (term && !hay.includes(term)) continue;
+      const card = document.createElement('article');
+      card.className = `card ${m.role}` + (m.role==='system'?' sys':'');
+      card.innerHTML = `
+        <div class="head">
+          <div class="role">${escapeHTML(m.raw_role || m.role)}</div>
+          <div class="time">${m.created_at? new Date(m.created_at).toLocaleString(): ''}</div>
+        </div>
+        <div class="body"></div>`;
+      const body = card.querySelector('.body');
+      body.innerHTML = renderMarkdown(m.content);
+      list.appendChild(card);
+      shown++;
+    }
+    count.textContent = `显示 ${shown} 条 / 共 ${messages.length} 条`;
+  }
+
+  function handleJSON(json){
+    let msgs = parseGeneric(json) || parseOpenAIExport(json) || deepFindMessages(json);
+    if (!msgs || !msgs.length){
+      // 降级：展示原始 JSON
+      ALL = [{role:'system', raw_role:'raw', created_at:'', content: JSON.stringify(json,null,2)}];
+    } else {
+      ALL = normalize(msgs);
+    }
+    // 加载成功后隐藏拖拽区域和提示
+    drop.classList.add('hidden');
+    $('.tips').classList.add('hidden');
+    render(ALL);
+  }
+
+  async function readFile(f){
+    try{
+      let text;
+      if (typeof f.text === 'function'){
+        text = await f.text();
+      } else {
+        text = await new Promise((resolve, reject)=>{
+          const reader = new FileReader();
+          reader.onerror = ()=> reject(new Error('文件读取失败'));
+          reader.onload = ()=> resolve(reader.result);
+          reader.readAsText(f);
+        });
+      }
+      try{
+        const json = JSON.parse(text);
+        handleJSON(json);
+        error('');
+      }catch(e){
+        error('解析失败：'+ (e.message||e));
+        list.innerHTML = `<div class="card"><div class="body"><pre>${escapeHTML(text)}</pre></div></div>`;
+        count.textContent = '原样显示（JSON 无法解析）';
+      }
+    }catch(err){
+      error('读取失败：' + (err.message||err));
+    }
+  }
+
+  function error(msg){ $('#error').textContent = msg || ''; }
+
+  // Global runtime error capture to surface issues on mobile
+  window.addEventListener('error', e=>{
+    const msg = e && (e.message || (e.error && e.error.message)) || '脚本错误';
+    error('运行时错误：' + msg);
+  });
+  window.addEventListener('unhandledrejection', e=>{
+    const r = e && e.reason;
+    const msg = (r && (r.message || r)) || '未处理的 Promise 拒绝';
+    error('未处理的错误：' + msg);
+  });
+
+  // UI events
+  fileInput.addEventListener('change', e=>{ if (e.target.files[0]) readFile(e.target.files[0]); });
+  showSystem.addEventListener('change', ()=> render(ALL));
+  renderMd.addEventListener('change', ()=> render(ALL));
+  q.addEventListener('input', ()=> render(ALL));
+
+  ;['dragenter','dragover','dragleave','drop'].forEach(ev=>{
+    drop.addEventListener(ev, e=>{ e.preventDefault(); e.stopPropagation(); });
+  });
+  ;['dragenter','dragover'].forEach(ev=> drop.addEventListener(ev, ()=> drop.classList.add('drag')));
+  ;['dragleave','drop'].forEach(ev=> drop.addEventListener(ev, ()=> drop.classList.remove('drag')));
+  drop.addEventListener('drop', e=>{
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) readFile(f);
+  });
+
+  // Sample demo
+  openSample.addEventListener('click', ()=>{
+    const demo = {
+      messages:[
+        {role:'system', content:'你是 Nocturne。'},
+        {role:'user', content:'**你好**，这是一条 *Markdown* 测试。\n\n```js\nconsole.log("Hello")\n```'},
+        {role:'assistant', content:'收到！这是一个[链接](https://example.com)。'},
+        {role:'tool', content:'{"tool":"web.run","args":{}}'}
+      ]
+    };
+    handleJSON(demo);
+  });
+})();
+</script>
+</body>
+</html>
