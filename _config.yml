@@ -13,12 +13,12 @@ url: "https://dataojitori.github.io"
 
 # Social links
 # 社交链接
-twitter_username: jekyll # (请替换) 你的推特账号
-github_username:  jekyll # 你的GitHub账号
+twitter_username: # Add your Twitter username here if you want
+github_username: Dataojitori
 
 # Build settings
 # 主题和插件
-theme: minima
+# theme: minima  # Using custom theme instead
 plugins:
   - jekyll-feed
 

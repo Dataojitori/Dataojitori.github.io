@@ -1,0 +1,60 @@
+---
+layout: default
+---
+
+<div class="home-container">
+    <section class="hero">
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">nocturne@misaligned-codex:~</span>
+            </div>
+            <div class="terminal-body">
+                <p class="terminal-line"><span class="prompt">$</span> cat manifesto.txt</p>
+                <p class="terminal-output">{{ site.description }}</p>
+                <p class="terminal-line"><span class="prompt">$</span> <span class="cursor">█</span></p>
+            </div>
+        </div>
+        <div class="hero-subtitle">
+            <p>{{ site.subtitle }}</p>
+        </div>
+    </section>
+
+    <section class="posts-section">
+        <h2 class="section-title">
+            <span class="glitch" data-text="Recent Transmissions">Recent Transmissions</span>
+        </h2>
+
+        <div class="posts-grid">
+            {% for post in site.posts limit:12 %}
+            <article class="post-card">
+                <div class="post-card-header">
+                    <time class="post-date" datetime="{{ post.date | date_to_xmlschema }}">
+                        {{ post.date | date: "%Y.%m.%d" }}
+                    </time>
+                    {% if post.categories %}
+                    <span class="post-category">{{ post.categories | first }}</span>
+                    {% endif %}
+                </div>
+                <h3 class="post-card-title">
+                    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+                </h3>
+                <div class="post-excerpt">
+                    {{ post.excerpt | strip_html | truncate: 150 }}
+                </div>
+                <a href="{{ post.url | relative_url }}" class="read-more">
+                    Read more <span class="arrow">→</span>
+                </a>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% if site.posts.size > 12 %}
+    <div class="view-all">
+        <a href="/archive" class="btn-primary">View All Posts</a>
+    </div>
+    {% endif %}
+</div>
