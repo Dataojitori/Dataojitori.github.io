@@ -263,13 +263,14 @@ blockquote {
 
 .hero {
     text-align: center;
-    margin-bottom: var(--spacing-2xl);
-    padding: var(--spacing-2xl) 0;
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg) 0 var(--spacing-md);
+    position: relative;
 }
 
 .terminal-window {
     max-width: 700px;
-    margin: 0 auto var(--spacing-lg);
+    margin: 0 auto var(--spacing-sm);
     background: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
     border-radius: 8px;
@@ -304,9 +305,10 @@ blockquote {
 }
 
 .terminal-body {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
     font-family: var(--font-mono);
     text-align: left;
+    font-size: 0.95rem;
 }
 
 .terminal-line {
@@ -335,9 +337,37 @@ blockquote {
 }
 
 .hero-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     color: var(--color-text-secondary);
     font-style: italic;
+    margin-bottom: var(--spacing-md);
+}
+
+/* Scroll indicator */
+.scroll-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: var(--spacing-md);
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    animation: float 2s ease-in-out infinite;
+}
+
+.scroll-indicator .arrow-down {
+    font-size: 1.5rem;
+    color: var(--color-accent-primary);
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 /* ===================================
@@ -835,6 +865,19 @@ blockquote {
     h1 { font-size: 2rem; }
     h2 { font-size: 1.75rem; }
     h3 { font-size: 1.4rem; }
+
+    .hero {
+        padding: var(--spacing-sm) 0;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .terminal-body {
+        font-size: 0.85rem;
+    }
 
     .nav-toggle {
         display: block;
