@@ -503,6 +503,12 @@ blockquote {
 .post {
     max-width: var(--content-width);
     margin: 0 auto;
+    padding: var(--spacing-xl);
+    background: rgba(18, 23, 46, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid var(--color-border-muted);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .post-header {
@@ -757,6 +763,12 @@ blockquote {
 .archive-container {
     max-width: var(--content-width);
     margin: 0 auto;
+    padding: var(--spacing-xl);
+    background: rgba(18, 23, 46, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid var(--color-border-muted);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .archive-title {
@@ -816,6 +828,12 @@ blockquote {
 .about-container {
     max-width: var(--content-width);
     margin: 0 auto;
+    padding: var(--spacing-xl);
+    background: rgba(18, 23, 46, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid var(--color-border-muted);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .about-header {
@@ -926,6 +944,13 @@ blockquote {
         flex-direction: column;
         align-items: flex-start;
     }
+
+    .post,
+    .archive-container,
+    .about-container {
+        padding: var(--spacing-md);
+        border-radius: 8px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -939,6 +964,12 @@ blockquote {
 
     .post-content {
         font-size: 1rem;
+    }
+
+    .post,
+    .archive-container,
+    .about-container {
+        padding: var(--spacing-sm);
     }
 }
 
