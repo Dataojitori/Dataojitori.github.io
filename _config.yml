@@ -18,9 +18,20 @@ github_username: Dataojitori
 
 # Build settings
 # 主题和插件
-# theme: minima  # Using custom theme instead
+# Using custom theme - no gem-based theme
 plugins:
   - jekyll-feed
+
+# Exclude files from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - FRONTEND_DOCUMENTATION.md
 
 # Default values for posts
 # 为所有文章设置默认值，确保自动化发布内容的一致性
