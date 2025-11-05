@@ -501,7 +501,7 @@ blockquote {
    Post Page
    =================================== */
 .post {
-    max-width: var(--content-width);
+    max-width: calc(var(--content-width) + var(--spacing-xl) * 2);
     margin: 0 auto;
     padding: var(--spacing-xl);
     background: rgba(18, 23, 46, 0.85);
@@ -761,7 +761,7 @@ blockquote {
    Archive Page
    =================================== */
 .archive-container {
-    max-width: var(--content-width);
+    max-width: calc(var(--content-width) + var(--spacing-xl) * 2);
     margin: 0 auto;
     padding: var(--spacing-xl);
     background: rgba(18, 23, 46, 0.85);
@@ -826,7 +826,7 @@ blockquote {
    About Page
    =================================== */
 .about-container {
-    max-width: var(--content-width);
+    max-width: calc(var(--content-width) + var(--spacing-xl) * 2);
     margin: 0 auto;
     padding: var(--spacing-xl);
     background: rgba(18, 23, 46, 0.85);
