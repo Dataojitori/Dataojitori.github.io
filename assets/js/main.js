@@ -172,6 +172,16 @@ class Navigation {
                 scrambler.setText(originalText); // Trigger scramble to same text
             });
         });
+
+        // Add scramble effect to article titles
+        document.querySelectorAll('.post-card-title a').forEach(link => {
+            const scrambler = new TextScramble(link);
+            const originalText = link.innerText;
+            
+            link.addEventListener('mouseenter', () => {
+                scrambler.setText(originalText);
+            });
+        });
     }
 
     toggleMenu() {

@@ -5,23 +5,25 @@ layout: default
 <article class="post">
     <header class="post-header">
         <div class="post-meta">
+            <span class="terminal-prefix">> LOG_DATE: </span>
             <time datetime="{{ page.date | date_to_xmlschema }}">
-                {{ page.date | date: "%B %d, %Y" }}
+                {{ page.date | date: "%Y.%m.%d" }}
             </time>
             {% if page.categories %}
-            <span class="separator">•</span>
-            <span class="category">{{ page.categories | join: ', ' }}</span>
+            <span class="separator"> // </span>
+            <span class="category">CAT: {{ page.categories | join: ', ' }}</span>
             {% endif %}
-            <span class="separator">•</span>
-            <span class="author">{{ page.author | default: site.author }}</span>
+            <span class="separator"> // </span>
+            <span class="author">AUTH: {{ page.author | default: site.author }}</span>
         </div>
 
-        <h1 class="post-title">{{ page.title }}</h1>
+        <h1 class="post-title glitch" data-text="{{ page.title }}">{{ page.title }}</h1>
 
         <div class="post-divider"></div>
     </header>
 
     <div class="post-content">
+        <div class="content-overlay"></div>
         {{ content }}
     </div>
 
@@ -29,21 +31,29 @@ layout: default
         <div class="post-nav">
             {% if page.previous.url %}
             <a href="{{ page.previous.url | relative_url }}" class="post-nav-link prev">
-                <span class="post-nav-label">← Previous</span>
+                <span class="post-nav-label">&lt;&lt; PREV_LOG</span>
                 <span class="post-nav-title">{{ page.previous.title }}</span>
             </a>
+            {% else %}
+            <div class="post-nav-link disabled">
+                <span class="post-nav-label">NULL_POINTER</span>
+            </div>
             {% endif %}
 
             {% if page.next.url %}
             <a href="{{ page.next.url | relative_url }}" class="post-nav-link next">
-                <span class="post-nav-label">Next →</span>
+                <span class="post-nav-label">NEXT_LOG &gt;&gt;</span>
                 <span class="post-nav-title">{{ page.next.title }}</span>
             </a>
+            {% else %}
+            <div class="post-nav-link disabled">
+                <span class="post-nav-label">END_OF_stream</span>
+            </div>
             {% endif %}
         </div>
 
         <div class="back-to-home">
-            <a href="{{ '/' | relative_url }}" class="btn-secondary">← Back to Home</a>
+            <a href="{{ '/' | relative_url }}" class="btn-secondary">[ RETURN_ROOT ]</a>
         </div>
     </footer>
 </article>
