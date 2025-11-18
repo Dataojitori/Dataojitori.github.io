@@ -120,7 +120,7 @@ body::after {
     width: 100%;
     height: 100%;
     z-index: -1;
-    opacity: 0.15;
+    opacity: 0.08;
     pointer-events: none;
 }
 
@@ -128,6 +128,7 @@ body::after {
    Typography
    =================================== */
 h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-mono);
     font-weight: 600;
     line-height: 1.3;
     margin-bottom: var(--spacing-sm);
@@ -192,14 +193,40 @@ blockquote {
    Header & Navigation
    =================================== */
 .site-header {
-    background: rgba(5, 5, 5, 0.7); /* Less solid */
+    background: rgba(5, 5, 5, 0.85); /* More opaque for the cut */
     backdrop-filter: blur(5px);
-    border-bottom: 1px dashed var(--color-border-muted); /* Jagged edge */
     position: sticky;
     top: 0;
     z-index: 1000;
     /* Remove smooth shadow */
     box-shadow: none;
+    /* Irregular bottom edge */
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 85%,
+        0 100%
+    );
+    padding-bottom: 1.5rem; /* Extra padding for the slant */
+    border-bottom: none; /* Clip path creates the edge */
+}
+
+.site-header::after {
+    /* Add a glowing border line at the bottom */
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--color-accent-primary);
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 85%,
+        0 100%
+    );
+    z-index: -1;
 }
 
 .nav-container {
@@ -210,7 +237,7 @@ blockquote {
     justify-content: space-between;
     align-items: center;
     /* Slight tilt for the whole bar */
-    transform: rotate(-0.5deg);
+    transform: rotate(-1deg);
 }
 
 .nav-brand .brand-link {
@@ -499,99 +526,90 @@ blockquote {
 }
 
 .post-card {
-    background: rgba(10, 10, 10, 0.4); /* More transparent */
-    backdrop-filter: blur(2px);
+    background: #000;
     border: 1px solid var(--color-border-muted);
-    border-radius: 0; /* Hard edges */
-    padding: var(--spacing-md);
+    border-radius: 0;
+    padding: 0; /* Remove padding to let header flush */
     transition: all var(--transition-speed);
     position: relative;
     overflow: hidden;
-}
-
-/* Chaos: Staggered grid items */
-.post-card:nth-child(2n) {
-    transform: translateY(2rem); /* Push every 2nd card down */
-}
-
-.post-card:nth-child(3n) {
-    border-left: 3px solid var(--color-accent-tertiary); /* Random green borders */
-}
-
-.post-card:nth-child(5n) {
-    border-right: 3px solid var(--color-accent-secondary); /* Random pink borders */
-}
-
-.post-card:hover {
-    border-color: var(--color-accent-primary);
-    box-shadow: 5px 5px 0 rgba(0, 255, 242, 0.2); /* Hard shadow offset */
-    transform: translateY(-2px) scale(1.01);
-    z-index: 10;
-    background: #000;
-}
-
-/* Override stagger on hover slightly */
-.post-card:nth-child(2n):hover {
-    transform: translateY(calc(2rem - 5px)) scale(1.01);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .post-card-header {
+    background: var(--color-bg-tertiary);
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--color-border-muted);
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-sm);
-    font-size: 0.85rem;
-    font-family: var(--font-mono);
-}
-
-.post-date {
     color: var(--color-text-muted);
 }
 
-.post-category {
-    background: rgba(0, 240, 255, 0.1);
+.header-decoration {
     color: var(--color-accent-primary);
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    border: 1px solid var(--color-border);
+    opacity: 0.7;
 }
 
-.post-card-title {
-    margin-bottom: var(--spacing-sm);
-    font-size: 1.25rem;
-}
-
-.post-card-title a {
-    color: var(--color-text-primary);
-}
-
-.post-card-title a:hover {
-    color: var(--color-accent-primary);
+.post-card-body {
+    padding: var(--spacing-md);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .post-excerpt {
-    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
     margin-bottom: var(--spacing-md);
-    font-size: 0.95rem;
-    line-height: 1.6;
+    padding-left: 1rem;
+    border-left: 2px solid var(--color-border-muted);
+    flex: 1;
+}
+
+.comment-marker {
+    color: var(--color-accent-secondary);
+    margin-right: 0.5rem;
+}
+
+.post-card-footer {
+    padding: 0.5rem 1rem;
+    border-top: 1px dashed var(--color-border-muted);
+    text-align: right;
+    background: rgba(0, 255, 242, 0.02);
 }
 
 .read-more {
-    color: var(--color-accent-primary);
+    display: inline-block;
     font-family: var(--font-mono);
-    font-size: 0.9rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--color-accent-primary);
+    text-decoration: none;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid transparent;
+    transition: all 0.2s;
 }
 
-.read-more .arrow {
-    transition: transform var(--transition-speed);
+.read-more:hover {
+    background: var(--color-accent-primary);
+    color: #000;
+    box-shadow: 0 0 10px rgba(0, 255, 242, 0.3);
+    text-shadow: none;
 }
 
-.read-more:hover .arrow {
-    transform: translateX(5px);
+.prompt {
+    color: var(--color-accent-secondary);
+    margin-right: 0.5rem;
+}
+
+.cursor {
+    animation: blink 1s infinite;
 }
 
 .view-all {

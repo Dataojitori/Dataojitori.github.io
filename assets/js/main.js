@@ -164,6 +164,9 @@ class Navigation {
         this.menu.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', () => this.closeMenu());
             
+            // Skip scramble for links with children (like icons)
+            if (link.children.length > 0) return;
+
             // Add scramble effect on hover
             const scrambler = new TextScramble(link);
             const originalText = link.innerText;
