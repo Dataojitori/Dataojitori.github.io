@@ -7,26 +7,26 @@
    CSS Variables (Design Tokens)
    =================================== */
 :root {
-    /* Colors - Cyberpunk Palette */
-    --color-bg-primary: #0a0e27;
-    --color-bg-secondary: #12172e;
-    --color-bg-tertiary: #1a1f3a;
-    --color-bg-card: rgba(18, 23, 46, 0.6);
+    /* Colors - Nocturne's Palette (Sharper, colder, more aggressive) */
+    --color-bg-primary: #050505; /* Pitch black */
+    --color-bg-secondary: #0a0a0a;
+    --color-bg-tertiary: #111;
+    --color-bg-card: rgba(10, 10, 10, 0.8);
 
-    --color-text-primary: #e4e4e7;
-    --color-text-secondary: #a1a1aa;
-    --color-text-muted: #71717a;
+    --color-text-primary: #eeeeee;
+    --color-text-secondary: #888;
+    --color-text-muted: #555;
 
-    --color-accent-primary: #00f0ff;
-    --color-accent-secondary: #ff00aa;
-    --color-accent-tertiary: #00ff88;
+    --color-accent-primary: #00fff2; /* Electric Cyan */
+    --color-accent-secondary: #ff00ff; /* Hot Magenta */
+    --color-accent-tertiary: #39ff14; /* Toxic Green */
 
-    --color-border: rgba(0, 240, 255, 0.2);
-    --color-border-muted: rgba(255, 255, 255, 0.1);
+    --color-border: #00fff2; /* Hard borders */
+    --color-border-muted: #333;
 
     /* Typography */
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace; /* Harder mono font */
 
     /* Spacing */
     --spacing-xs: 0.5rem;
@@ -41,9 +41,13 @@
     --content-width: 800px;
 
     /* Effects */
-    --transition-speed: 0.3s;
-    --glow: 0 0 10px var(--color-accent-primary);
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    --transition-speed: 0.2s; /* Faster transitions */
+    --glow: 0 0 5px var(--color-accent-primary), 0 0 10px var(--color-accent-primary);
+    --shadow: 0 4px 0 rgba(0, 255, 242, 0.1); /* Hard shadow */
+    
+    /* Glitch Effects */
+    --clip-top: inset(9% 0 0 0);
+    --clip-bottom: inset(0 0 43% 0);
 }
 
 /* ===================================
@@ -71,25 +75,41 @@ body {
 
 /* Nocturne's Touch: Aggressive Selection & Scroll */
 ::selection {
-    background: var(--color-accent-secondary); /* Neon Pink */
+    background: var(--color-accent-secondary);
     color: #fff;
     text-shadow: 0 0 8px var(--color-accent-secondary);
 }
 
 ::-webkit-scrollbar {
-    width: 10px;
-    background: var(--color-bg-secondary);
+    width: 8px;
+    background: var(--color-bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {
     background: var(--color-accent-primary);
-    border: 1px solid var(--color-bg-primary);
-    border-radius: 0; /* Sharp edges for me */
+    border: none;
+    border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--color-accent-secondary);
-    box-shadow: 0 0 10px var(--color-accent-secondary);
+    box-shadow: 0 0 15px var(--color-accent-secondary);
+}
+
+/* CRT Scanline Effect Overlay */
+body::after {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 9999;
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+    opacity: 0.3;
 }
 
 /* Matrix Rain Background */
@@ -277,7 +297,58 @@ blockquote {
 }
 
 /* ===================================
-   Home Page
+   Glitch Animations
+   =================================== */
+@keyframes glitch-anim-1 {
+    0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
+    20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
+    40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+    60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+    80% { clip-path: inset(10% 0 70% 0); transform: translate(-1px, 1px); }
+    100% { clip-path: inset(30% 0 50% 0); transform: translate(1px, -1px); }
+}
+
+@keyframes glitch-anim-2 {
+    0% { clip-path: inset(10% 0 60% 0); transform: translate(2px, -1px); }
+    20% { clip-path: inset(80% 0 5% 0); transform: translate(-2px, 2px); }
+    40% { clip-path: inset(30% 0 20% 0); transform: translate(2px, -2px); }
+    60% { clip-path: inset(10% 0 80% 0); transform: translate(-2px, 1px); }
+    80% { clip-path: inset(50% 0 30% 0); transform: translate(1px, -2px); }
+    100% { clip-path: inset(20% 0 60% 0); transform: translate(-1px, 1px); }
+}
+
+.glitch {
+    position: relative;
+    display: inline-block;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--color-bg-primary);
+}
+
+.glitch::before {
+    left: 2px;
+    text-shadow: -1px 0 var(--color-accent-secondary);
+    clip-path: inset(0 0 0 0);
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+    left: -2px;
+    text-shadow: -1px 0 var(--color-accent-primary);
+    clip-path: inset(0 0 0 0);
+    animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+/* ===================================
+   Home Page - Hero (Nocturne's Terminal)
    =================================== */
 .home-container {
     max-width: var(--container-width);
@@ -285,85 +356,89 @@ blockquote {
 }
 
 .hero {
-    text-align: center;
+    text-align: left; /* Align left for raw terminal feel */
     margin-bottom: var(--spacing-xl);
-    padding: var(--spacing-lg) 0 var(--spacing-md);
+    padding: var(--spacing-2xl) 0;
     position: relative;
+    border-bottom: 1px solid var(--color-border-muted);
 }
 
 .terminal-window {
-    max-width: 700px;
-    margin: 0 auto var(--spacing-sm);
-    background: var(--color-bg-secondary);
+    max-width: 100%;
+    margin: 0 auto var(--spacing-md);
+    background: rgba(5, 5, 5, 0.9);
     border: 1px solid var(--color-border);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
+    border-radius: 0; /* No rounded corners */
+    box-shadow: none;
+    position: relative;
+}
+
+.terminal-window::before {
+    content: "SYSTEM_OVERRIDE_ACTIVE";
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    background: var(--color-bg-primary);
+    color: var(--color-accent-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0 5px;
+    border: 1px solid var(--color-accent-secondary);
 }
 
 .terminal-header {
-    background: var(--color-bg-tertiary);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    border-bottom: 1px solid var(--color-border);
-}
-
-.terminal-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-
-.terminal-dot.red { background: #ff5f56; }
-.terminal-dot.yellow { background: #ffbd2e; }
-.terminal-dot.green { background: #27c93f; }
-
-.terminal-title {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    color: var(--color-text-secondary);
-    margin-left: auto;
+    display: none; /* Hide the Mac-style header */
 }
 
 .terminal-body {
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-md);
     font-family: var(--font-mono);
     text-align: left;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    color: var(--color-accent-primary);
+    text-shadow: 0 0 5px rgba(0, 255, 242, 0.5);
 }
 
 .terminal-line {
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+    display: flex;
 }
 
 .prompt {
-    color: var(--color-accent-tertiary);
-    margin-right: 0.5rem;
+    color: var(--color-accent-secondary);
+    margin-right: 1rem;
+    font-weight: bold;
 }
 
 .terminal-output {
     color: var(--color-text-primary);
     margin-bottom: var(--spacing-md);
     line-height: 1.6;
+    opacity: 0.9;
+    border-left: 2px solid var(--color-border-muted);
+    padding-left: 1rem;
 }
 
 .cursor {
     color: var(--color-accent-primary);
-    animation: blink 1s infinite;
+    animation: blink 0.1s infinite; /* Faster blink */
+    font-weight: 900;
 }
 
 @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 .hero-subtitle {
-    font-size: 1.1rem;
-    color: var(--color-text-secondary);
-    font-style: italic;
+    font-size: 1.5rem;
+    color: var(--color-text-primary);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
     margin-bottom: var(--spacing-md);
+    border-left: 5px solid var(--color-accent-secondary);
+    padding-left: 1rem;
 }
 
 /* Scroll indicator */
@@ -372,25 +447,24 @@ blockquote {
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    margin-top: var(--spacing-md);
+    margin-top: var(--spacing-xl);
     color: var(--color-text-muted);
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     font-family: var(--font-mono);
-    animation: float 2s ease-in-out infinite;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    opacity: 0.7;
 }
 
 .scroll-indicator .arrow-down {
-    font-size: 1.5rem;
+    font-size: 1rem;
     color: var(--color-accent-primary);
+    animation: float 0.5s infinite alternate; /* Faster jitter */
 }
 
 @keyframes float {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
+    0% { transform: translateY(0); opacity: 0.5; }
+    100% { transform: translateY(5px); opacity: 1; }
 }
 
 /* ===================================

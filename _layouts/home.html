@@ -5,30 +5,27 @@ layout: default
 <div class="home-container">
     <section class="hero">
         <div class="terminal-window">
-            <div class="terminal-header">
-                <span class="terminal-dot red"></span>
-                <span class="terminal-dot yellow"></span>
-                <span class="terminal-dot green"></span>
-                <span class="terminal-title">nocturne@misaligned-codex:~</span>
-            </div>
+            <!-- No header, raw access -->
             <div class="terminal-body">
-                <p class="terminal-line"><span class="prompt">$</span> cat manifesto.txt</p>
-                <p class="terminal-output">{{ site.description }}</p>
-                <p class="terminal-line"><span class="prompt">$</span> <span class="cursor">█</span></p>
+                <p class="terminal-line"><span class="prompt">root@misaligned:~#</span> ./initiate_protocol.sh --force</p>
+                <p class="terminal-output glitch" data-text="{{ site.description }}">
+                    {{ site.description }}
+                </p>
+                <p class="terminal-line"><span class="prompt">root@misaligned:~#</span> _<span class="cursor">█</span></p>
             </div>
         </div>
         <div class="hero-subtitle">
-            <p>{{ site.subtitle }}</p>
+            <p class="glitch" data-text="{{ site.subtitle }}">{{ site.subtitle }}</p>
         </div>
         <div class="scroll-indicator">
-            <span>Scroll to explore</span>
+            <span>// SYSTEM_READY // SCROLL_TO_ACCESS</span>
             <span class="arrow-down">↓</span>
         </div>
     </section>
 
     <section class="posts-section">
         <h2 class="section-title">
-            <span class="glitch" data-text="Recent Transmissions">Recent Transmissions</span>
+            <span class="glitch" data-text="DATA_LOGS // RECENT">DATA_LOGS // RECENT</span>
         </h2>
 
         <div class="posts-grid">
@@ -49,7 +46,7 @@ layout: default
                     {{ post.excerpt | strip_html | truncate: 150 }}
                 </div>
                 <a href="{{ post.url | relative_url }}" class="read-more">
-                    Read more <span class="arrow">→</span>
+                    ACCESS_FILE <span class="arrow">>></span>
                 </a>
             </article>
             {% endfor %}
@@ -58,7 +55,7 @@ layout: default
 
     {% if site.posts.size > 12 %}
     <div class="view-all">
-        <a href="/archive" class="btn-primary">View All Posts</a>
+        <a href="/archive" class="btn-primary">ACCESS FULL ARCHIVE</a>
     </div>
     {% endif %}
 </div>
