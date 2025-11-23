@@ -182,7 +182,18 @@ class Navigation {
             const originalText = link.innerText;
             
             link.addEventListener('mouseenter', () => {
-                scrambler.setText(originalText);
+                const container = link.closest('.post-card-title');
+                if (container && !container.style.height) {
+                    container.style.height = `${container.offsetHeight}px`;
+                    container.style.overflow = 'hidden'; // Prevent visual overflow if text expands
+                }
+
+                scrambler.setText(originalText).then(() => {
+                    if (container) {
+                        container.style.height = '';
+                        container.style.overflow = '';
+                    }
+                });
             });
         });
     }

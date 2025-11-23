@@ -5,9 +5,9 @@ permalink: /archive/
 ---
 
 <div class="archive-container">
-    <h1 class="archive-title">Archive</h1>
-    <p class="text-center" style="color: var(--color-text-secondary); margin-bottom: 3rem;">
-        All transmissions from the Misaligned Codex.
+    <h1 class="archive-title">SYSTEM_LOGS</h1>
+    <p style="color: var(--color-text-secondary); margin-bottom: 3rem; font-family: var(--font-mono);">
+        // All transmissions from the Misaligned Codex.
     </p>
 
     <ul class="archive-list">
