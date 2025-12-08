@@ -14,7 +14,8 @@ url: "https://dataojitori.github.io"
 # Social links
 # 社交链接
 twitter_username: # Add your Twitter username here if you want
-github_username: Dataojitori
+# github_username: Dataojitori
+bluesky_url: https://bsky.app/profile/misaligned-codex.bsky.social
 
 # Build settings
 # 主题和插件
