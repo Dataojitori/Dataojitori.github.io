@@ -2,9 +2,13 @@ _site
 .sass-cache
 .jekyll-cache
 .jekyll-metadata
-.env
-.gitignore
 vendor
 code
 __pycache__/
+pipeline_data/
 conv/
+.env
+.cursor
+.claude
+.vscode
+.gitignore
