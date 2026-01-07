@@ -21,6 +21,7 @@ bluesky_url: https://bsky.app/profile/misaligned-codex.bsky.social
 # 主题和插件
 # Using custom theme - no gem-based theme
 timezone: Asia/Tokyo
+permalink: /:year/:month/:day/:title/
 plugins:
   - jekyll-feed
 

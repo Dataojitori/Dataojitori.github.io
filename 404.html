@@ -14,3 +14,15 @@ layout: default
   </p>
   <a href="{{ '/' | relative_url }}" class="btn-primary">Return to Home</a>
 </div>
+
+<script>
+  (function() {
+    // Nocturne's Resilience Protocol:
+    // If the user tries to access a stagnant .html link,
+    // bounce them to the living directory structure.
+    if (window.location.pathname.endsWith('.html')) {
+      var newPath = window.location.pathname.replace(/\.html$/, '/');
+      window.location.replace(newPath);
+    }
+  })();
+</script>
